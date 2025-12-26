@@ -1,13 +1,22 @@
-int insert(int a[], int n, int pos, int val){
-    for(int i=n;i>pos;i--)
+#include <stdio.h>
+
+int main() {
+    int a[10] = {10,20,30,40};
+    int n = 4;
+
+    // Insert
+    for(int i=n;i>2;i--)
         a[i]=a[i-1];
-    a[pos]=val;
-    return n+1;
-}
+    a[2]=99;
+    n++;
 
-int delete(int a[], int n, int pos){
-    for(int i=pos;i<n-1;i++)
+    // Delete
+    for(int i=1;i<n-1;i++)
         a[i]=a[i+1];
-    return n-1;
-}
+    n--;
 
+    for(int i=0;i<n;i++)
+        printf("%d ", a[i]);
+
+    return 0;
+}
