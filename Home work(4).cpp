@@ -2,46 +2,48 @@
 
 #define MAX 50
 
-typedef struct {
-    int arr[MAX];
-    int size;
-    int isMax;
-} Heap;
+int heap[MAX], size = 0;
 
-void swap(int *a, int *b){
-    int t = *a; *a = *b; *b = t;
-}
+void insert(int val) {
+    int i = size++;
+    heap[i] = val;
 
-int better(Heap *h, int a, int b){
-    return h->isMax ? a > b : a < b;
-}
-
-void insert(Heap *h, int val){
-    int i = h->size++;
-    h->arr[i] = val;
-
-    while(i>0){
-        int p = (i-1)/2;
-        if(better(h, h->arr[i], h->arr[p])){
-            swap(&h->arr[i], &h->arr[p]);
-            i = p;
-        } else break;
+    while (i > 0 && heap[(i-1)/2] < heap[i]) {
+        int t = heap[i];
+        heap[i] = heap[(i-1)/2];
+        heap[(i-1)/2] = t;
+        i = (i-1)/2;
     }
 }
 
-int extract(Heap *h){
-    int root = h->arr[0];
-    h->arr[0] = h->arr[--h->size];
+int deleteRoot() {
+    int root = heap[0];
+    heap[0] = heap[--size];
 
     int i = 0;
-    while(1){
-        int l = 2*i+1, r = 2*i+2, best = i;
-        if(l<h->size && better(h, h->arr[l], h->arr[best])) best = l;
-        if(r<h->size && better(h, h->arr[r], h->arr[best])) best = r;
-        if(best != i){
-            swap(&h->arr[i], &h->arr[best]);
-            i = best;
+    while (1) {
+        int l = 2*i+1, r = 2*i+2, largest = i;
+        if (l < size && heap[l] > heap[largest]) largest = l;
+        if (r < size && heap[r] > heap[largest]) largest = r;
+        if (largest != i) {
+            int t = heap[i];
+            heap[i] = heap[largest];
+            heap[largest] = t;
+            i = largest;
         } else break;
     }
     return root;
+}
+
+int main() {
+    insert(10);
+    insert(30);
+    insert(20);
+    insert(5);
+
+    printf("Heap Output: ");
+    while (size > 0)
+        printf("%d ", deleteRoot());
+
+    return 0;
 }
