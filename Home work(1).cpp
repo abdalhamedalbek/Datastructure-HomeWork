@@ -1,37 +1,40 @@
 #include <stdio.h>
 
 typedef struct {
-    int row, col, val;
-} Triple;
+    int row, col, value;
+} Sparse;
 
-int convertToSparse(int mat[][10], int r, int c, Triple s[]) {
-    int k = 0;
-    s[k++] = (Triple){r, c, 0}; // header
+int main() {
+    int matrix[4][4] = {
+        {0, 0, 3, 0},
+        {0, 4, 0, 0},
+        {5, 0, 0, 0},
+        {0, 0, 0, 6}
+    };
 
-    for (int i = 0; i < r; i++) {
-        for (int j = 0; j < c; j++) {
-            if (mat[i][j] != 0) {
-                s[k++] = (Triple){i, j, mat[i][j]};
-                s[0].val++;
+    Sparse s[20];
+    int k = 1;
+
+    s[0].row = 4;
+    s[0].col = 4;
+    s[0].value = 0;
+
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            if (matrix[i][j] != 0) {
+                s[k].row = i;
+                s[k].col = j;
+                s[k].value = matrix[i][j];
+                k++;
+                s[0].value++;
             }
         }
     }
-    return k;
-}
 
-int main() {
-    int mat[4][10] = {
-        {0,0,3,0},
-        {0,4,0,0},
-        {5,0,0,0},
-        {0,0,0,6}
-    };
-
-    Triple sp[20];
-    int n = convertToSparse(mat, 4, 4, sp);
-
-    for (int i = 0; i < n; i++)
-        printf("%d %d %d\n", sp[i].row, sp[i].col, sp[i].val);
+    printf("Row Col Value\n");
+    for (int i = 0; i < k; i++) {
+        printf("%d   %d   %d\n", s[i].row, s[i].col, s[i].value);
+    }
 
     return 0;
 }
