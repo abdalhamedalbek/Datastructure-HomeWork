@@ -1,209 +1,181 @@
-#include <stdio.h>
+#include<stdio.h>
+#include<stdlib.h>
 
-#define MAX 100 
+struct node {
+	int data;
+	struct node *next;
+	struct node *prev;
+}*head=NULL;
 
+struct node* insert (struct node *head);
+void print_beginning (struct node *head);
+void print_end (struct node *head);
+struct node* del (struct node *head);
+struct node* destroy (struct node *head);
+void sum (struct node *head);
+void avg (struct node *head);
 
-void traverse(int arr[], int size);
-int insertAtBeginning(int arr[], int size, int value);
-int insertAtPosition(int arr[], int size, int value, int pos);
-int insertAtEnd(int arr[], int size, int value);
-int deleteAtBeginning(int arr[], int size);
-int deleteAtPosition(int arr[], int size, int pos);
-int deleteAtEnd(int arr[], int size);
-
-int main() {
-    int arr[MAX];
-    int size, choice, value, pos;
-
-    
-    printf("Enter number of elements (max 100): ");
-    scanf("%d", &size);
-
-    printf("Enter %d elements:\n", size);
-    for (int i = 0; i < size; i++) {
-        scanf("%d", &arr[i]);
-    }
-
-    while (1) {
-        printf("\n====== ARRAY OPERATIONS MENU ======\n");
-        printf("1. Traverse\n");
-        printf("2. Insert at Beginning\n");
-        printf("3. Insert at Position\n");
-        printf("4. Insert at End\n");
-        printf("5. Delete at Beginning\n");
-        printf("6. Delete at Position\n");
-        printf("7. Delete at End\n");
-        printf("8. Exit\n");
-        printf("Choose an option: ");
-        scanf("%d", &choice);
-
-        switch (choice) {
-            case 1:
-                traverse(arr, size);
-                break;
-
-            case 2:
-                printf("Enter value to insert: ");
-                scanf("%d", &value);
-                size = insertAtBeginning(arr, size, value);
-                break;
-
-            case 3:
-                printf("Enter value: ");
-                scanf("%d", &value);
-                printf("Enter position (0-based index): ");
-                scanf("%d", &pos);
-                size = insertAtPosition(arr, size, value, pos);
-                break;
-
-            case 4:
-                printf("Enter value to insert: ");
-                scanf("%d", &value);
-                size = insertAtEnd(arr, size, value);
-                break;
-
-            case 5:
-                size = deleteAtBeginning(arr, size);
-                break;
-
-            case 6:
-                printf("Enter position to delete (0-based index): ");
-                scanf("%d", &pos);
-                size = deleteAtPosition(arr, size, pos);
-                break;
-
-            case 7:
-                size = deleteAtEnd(arr, size);
-                break;
-
-            case 8:
-                printf("Exiting program...\n");
-                return 0;
-
-            default:
-                printf("Invalid choice! Try again.\n");
-        }
-    }
-
-    return 0;
+int main () {
+	while (1) {
+		int x;
+		printf ("1.Add a new node beginning\n2.Print the nodes from the beginning\n3.Print the nodes from the end\n4.Delete node from the list\n5.Destroy the list\n6.Sum\n7.Average\n8.Exit\n");
+		scanf ("%d",&x);
+		switch (x) {
+			case 1:head=insert(head); break;
+			case 2:print_beginning(head); break;
+			case 3:print_end(head); break;
+			case 4:head=del(head); break;
+			case 5:head=destroy(head); break;
+			case 6:sum(head); break;
+			case 7:avg(head); break;
+			case 8:exit(0); break;
+		}
+		printf ("___________________________________________________________\n");
+	}
 }
 
-
-void traverse(int arr[], int size) {
-    if (size == 0) {
-        printf("Array is empty.\n");
-        return;
-    }
-
-    printf("Array elements: ");
-    for (int i = 0; i < size; i++) {
-        printf("%d ", arr[i]);
-    }
-    printf("\n");
+struct node* insert (struct node *head) {
+	struct node *newnode=(struct node *)malloc(sizeof(struct node));
+	printf ("Enter a number to insert it:\n");
+	scanf ("%d",&newnode->data);
+	struct node *q,*p=head;
+	if (head==NULL) {
+		head=newnode;
+		newnode->next=NULL;
+		newnode->prev=NULL;
+	}
+	else {
+		while (p!=NULL && p->data<newnode->data) {
+			q=p;
+			p=p->next;
+		}
+		if (p==head) {
+			head=newnode;
+			newnode->prev=NULL;
+			newnode->next=p;
+			p->prev=newnode;
+		}
+		else if (p==NULL) {
+			q->next=newnode;
+			newnode->prev=q;
+			newnode->next=NULL;
+		}
+		else {
+			q->next=newnode;
+			newnode->prev=q;
+			newnode->next=p;
+			p->prev=newnode;
+		}
+	}
+	printf ("**DONE**\n");
+	return head;
 }
 
-
-
-int insertAtBeginning(int arr[], int size, int value) {
-    if (size >= MAX) {
-        printf("Array overflow! Cannot insert.\n");
-        return size;
-    }
-
-    for (int i = size; i > 0; i--) {
-        arr[i] = arr[i - 1];
-    }
-
-    arr[0] = value;
-    size++;
-
-    printf("Inserted %d at beginning.\n", value);
-    return size;
+void print_beginning (struct node *head) {
+	if (head==NULL) printf ("The list is empty\n");
+	else {
+		struct node *p=head;
+		printf ("Your list is:\n");
+		while (p!=NULL) {
+			printf ("%d\n",p->data);
+			p=p->next;
+		}
+	}
+	printf ("**DONE**\n");
 }
 
-
-int insertAtPosition(int arr[], int size, int value, int pos) {
-    if (pos < 0 || pos > size) {
-        printf("Invalid position!\n");
-        return size;
-    }
-
-    if (size >= MAX) {
-        printf("Array overflow! Cannot insert.\n");
-        return size;
-    }
-
-    for (int i = size; i > pos; i--) {
-        arr[i] = arr[i - 1];
-    }
-
-    arr[pos] = value;
-    size++;
-
-    printf("Inserted %d at position %d.\n", value, pos);
-    return size;
+void print_end (struct node *head) {
+	if (head==NULL) printf ("The list is empty\n");
+	else {
+		struct node *p=head;
+		while (p->next!=NULL) p=p->next;
+		printf ("Your list is:\n");
+		while (p!=NULL) {
+			printf ("%d\n",p->data);
+			p=p->prev;
+		}
+	}
+	printf ("**DONE**\n");
 }
 
-
-int insertAtEnd(int arr[], int size, int value) {
-    if (size >= MAX) {
-        printf("Array overflow! Cannot insert.\n");
-        return size;
-    }
-
-    arr[size] = value;
-    size++;
-
-    printf("Inserted %d at end.\n", value);
-    return size;
+struct node* del (struct node *head) {
+	if (head==NULL) printf ("The list is empty\n");
+	else {
+		int value;
+		printf ("Enter a number to delete it:\n");
+		scanf ("%d",&value);
+		struct node *q,*p=head;
+		if (head->data==value) {
+			printf ("%d deleted\n",p->data);
+			head=head->next;
+			head->prev=NULL;
+			free(p);
+		}
+		else {
+			while (p!=NULL && p->data!=value) {
+				q=p;
+				p=p->next;
+			}
+			if (p!=NULL) {
+				if (p->next!=NULL) {
+					printf ("%d deleted\n",p->data);
+					q->next=p->next;
+					free(p);
+					p=q->next;
+					p->prev=q;
+				}
+				else if (p->next==NULL) {
+					free(p);
+					q->next=NULL;
+				}
+			}
+			else printf ("No element found\n");
+		}
+	}
+	printf ("**DONE**\n");
+	return head;
 }
 
-
-
-int deleteAtBeginning(int arr[], int size) {
-    if (size == 0) {
-        printf("Array underflow! Cannot delete.\n");
-        return size;
-    }
-
-    for (int i = 0; i < size - 1; i++) {
-        arr[i] = arr[i + 1];
-    }
-
-    size--;
-    printf("Deleted element at beginning.\n");
-    return size;
+struct node* destroy (struct node *head) {
+	if (head==NULL) printf ("The list is empty\n");
+	else {
+		struct node *p;
+		while (head!=NULL) {
+			p=head;
+			head=head->next;
+			free(p);
+		}
+		printf ("**DONE**\n");
+	}
+	return head;
 }
 
-
-int deleteAtPosition(int arr[], int size, int pos) {
-    if (size == 0) {
-        printf("Array underflow! Cannot delete.\n");
-        return size;
-    }
-
-    if (pos < 0 || pos >= size) {
-        printf("Invalid position!\n");
-        return size;
-    }
-
-    for (int i = pos; i < size - 1; i++) {
-        arr[i] = arr[i + 1];
-    }
-
-    size--;
-    printf("Deleted element at position %d.\n", pos);
-    return size;
+void sum (struct node *head) {
+	if (head==NULL) printf ("Your list is empty\n");
+	else {
+		struct node *p=head;
+		int sum=0;
+		while (p!=NULL) {
+			sum+=p->data;
+			p=p->next;
+		}
+		printf ("The sum is:%d\n",sum);
+		printf ("**DONE**\n");
+	}
 }
 
-
-int deleteAtEnd(int arr[], int size) {
-    if (size == 0) {
-        printf("Array underflow! Cannot delete.\n");
-        return size;
-    }
-
-    size--;
-    printf("Deleted element at end.\n");
-    return size;
+void avg (struct node *head) {
+	if (head==NULL) printf ("Your list is empty\n");
+	else {
+		struct node *p=head;
+		int avg,c=0,sum=0;
+		while (p!=NULL) {
+			sum+=p->data;
+			c++;
+			p=p->next;
+		}
+		avg=sum/c;
+		printf ("The average is:%d\n",avg);
+		printf ("**DONE**\n");
+	}
 }
